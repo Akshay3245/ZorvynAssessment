@@ -5,6 +5,12 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { authApi } from "../api/authApi";
 import { useAuth } from "../hooks/useAuth";
 
+const demoCredentials = [
+  { role: "ADMIN", email: "admin@finance.local", password: "Admin@123" },
+  { role: "ANALYST", email: "analyst@finance.local", password: "Analyst@123" },
+  { role: "VIEWER", email: "viewer@finance.local", password: "Viewer@123" }
+] as const;
+
 export const LoginPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
@@ -35,6 +41,12 @@ export const LoginPage = () => {
     event.preventDefault();
     setError(null);
     loginMutation.mutate({ email, password });
+  };
+
+  const handleDemoFill = (credential: (typeof demoCredentials)[number]) => {
+    setEmail(credential.email);
+    setPassword(credential.password);
+    setError(null);
   };
 
   return (
@@ -76,6 +88,25 @@ export const LoginPage = () => {
             {loginMutation.isPending ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-900">Demo credentials</p>
+          <div className="mt-2 grid gap-2">
+            {demoCredentials.map((credential) => (
+              <button
+                key={credential.role}
+                type="button"
+                onClick={() => handleDemoFill(credential)}
+                className="grid gap-1 rounded-md border border-amber-200 bg-white px-3 py-2 text-left text-xs text-slate-700 hover:bg-amber-100"
+              >
+                <span className="font-semibold text-slate-900">{credential.role}</span>
+                <span>{credential.email}</span>
+                <span className="font-mono text-slate-600">{credential.password}</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-amber-800">Click any credential to auto-fill email and password.</p>
+        </div>
 
         <p className="mt-4 text-sm text-slate-600">
           No account?{" "}
