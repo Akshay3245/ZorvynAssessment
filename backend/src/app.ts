@@ -14,9 +14,10 @@ const allowedOrigins = env.CORS_ORIGIN.split(",")
   .filter(Boolean);
 
 app.use(helmet());
+
 app.use(
   cors({
-    origin(origin, callback) {
+    origin(origin: string | undefined, callback: any) {
       if (!origin) {
         return callback(null, true);
       }
@@ -30,8 +31,14 @@ app.use(
     credentials: true
   })
 );
+
 app.use(morgan("dev"));
 app.use(express.json());
+
+
+app.get("/", (_req, res) => {
+  res.send("API is running");
+});
 
 app.get("/health", (_req, res) => {
   res.status(200).json({
